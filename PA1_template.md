@@ -71,3 +71,25 @@ summary
 ## 10 2012-10-10   34.37500            0
 ## ..        ...        ...          ...
 ```
+
+##Average daily activity pattern
+
+```r
+activity_interval <- activity %>%
+  group_by(interval) %>%
+    summarise(mean_steps= mean(steps))
+
+max <- max(activity_interval$mean_steps) # Find a dplyr way to do this.
+max_interval <- activity_interval %>% filter(mean_steps == max) %>% select(interval)
+
+ggplot(activity_interval,aes(interval, mean_steps)) +
+  geom_line() 
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+
+```r
+#+ geom_text(data=activity_interval[max_interval, max], label="note" , vjust=1, colour="red")
+```
+
+######5-minute interval that has the average maximum number of steps is 835
