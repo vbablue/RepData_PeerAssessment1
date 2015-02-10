@@ -9,19 +9,31 @@ setwd("C:/git/RepData_PeerAssessment1")
 ```
 ## Loading and preprocessing the data
 ```{r}
+library(dplyr)
+
 activity <- read.csv("activity.csv")
-str(activity)
+activity[is.na(activity)] <- 0
 ```
+
 ## What is mean total number of steps taken per day?
+```{r}
+activity_sum <- activity %>%
+  group_by(date) %>%
+    summarise(count = sum(steps), mean_steps= mean(steps), median_steps=median(steps))
+```
 
+###Histogram here
+```{r}
+library(ggplot2)
+bar <- ggplot(activity_sum, aes(x=date, y=count)) + geom_bar(stat="identity") 
+bar
+```
 
+##Mean and median total number of steps taken per day
 
-## What is the average daily activity pattern?
+```{r}
+summary <- activity_sum %>% 
+                  select(date, mean_steps, median_steps)
 
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+summary
+```
