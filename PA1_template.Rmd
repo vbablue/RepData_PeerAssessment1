@@ -4,9 +4,6 @@ output:
   html_document:
     keep_md: true
 ---
-```{r}
-setwd("C:/git/RepData_PeerAssessment1")
-```
 ## Loading and preprocessing the data
 ```{r}
 library(dplyr)
@@ -22,7 +19,7 @@ activity_sum <- activity %>%
     summarise(count = sum(steps), mean_steps= mean(steps), median_steps=median(steps))
 ```
 
-###Histogram here
+###Histogram 
 ```{r}
 library(ggplot2)
 bar <- ggplot(activity_sum, aes(x=date, y=count)) + geom_bar(stat="identity") 
@@ -55,3 +52,52 @@ ggplot(activity_interval,aes(interval, mean_steps)) +
 ```
 
 ######5-minute interval that has the average maximum number of steps is `r max_interval`
+
+
+##Imputing missing values
+```{r}
+activity2 <- read.csv("activity.csv")
+total_nas <- sum(is.na(activity$steps))
+
+activity2[is.na(activity2)] <- mean(activity2$steps, na.rm = TRUE)
+
+library(ggplot2)
+
+activity2_sum <- activity2 %>%
+  group_by(date) %>%
+    summarise(count = sum(steps), mean_steps= mean(steps), median_steps=median(steps))
+
+
+bar <- ggplot(activity2_sum, aes(x=date, y=count)) + geom_bar(stat="identity") 
+bar
+
+summary <- activity2_sum %>% 
+                  select(date, mean_steps, median_steps)
+
+summary
+
+```
+
+### Comparing the differences between the non-imputed and imputed data sets
+```{r}
+imp <- select(activity2_sum, date, count )
+orig <- select(activity_sum, date, count )
+```
+###Weekdays vs Weekends
+```{r}
+activity2 <- read.csv("activity.csv")
+activity2[is.na(activity2)] <- mean(activity2$steps, na.rm = TRUE)
+
+activity2$date <- as.Date(activity2$date)
+
+activity2 <- mutate(activity2, weekday = as.factor(ifelse(weekdays(activity2$date) %in% c("Saturday", "Sunday"), "Weekend", "Weekday")))
+
+activity2_weekend <- activity2 %>%
+  group_by(weekday, interval) %>%
+    summarise(count = sum(steps))
+
+
+ g <- ggplot(activity2_weekend,aes(interval, count))  
+ g + geom_line(col="steelblue") + facet_grid(weekday ~ .)
+  
+ ```
