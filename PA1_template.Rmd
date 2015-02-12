@@ -9,21 +9,22 @@ output:
 library(dplyr)
 
 activity <- read.csv("activity.csv")
-activity[is.na(activity)] <- 0
+activity_comp <- activity[complete.cases(activity),]
+
 ```
 
 ## What is mean total number of steps taken per day?
 ```{r}
-activity_sum <- activity %>%
+activity_sum <- activity_comp %>%
   group_by(date) %>%
     summarise(count = sum(steps), mean_steps= mean(steps), median_steps=median(steps))
 ```
 
 ###Histogram 
 ```{r}
-library(ggplot2)
-bar <- ggplot(activity_sum, aes(x=date, y=count)) + geom_bar(stat="identity") 
-bar
+
+hist(activity_sum$count, xlab="No.Steps (Day)", ylab="Frequency", main="Histogram of Steps/Day", col="steelblue")
+
 ```
 
 ##Mean and median total number of steps taken per day
@@ -37,7 +38,8 @@ summary
 
 ##Average daily activity pattern
 ```{r}
-activity_interval <- activity %>%
+library(ggplot2)
+activity_interval <- activity_comp %>%
   group_by(interval) %>%
     summarise(mean_steps= mean(steps))
 
@@ -57,9 +59,10 @@ ggplot(activity_interval,aes(interval, mean_steps)) +
 ##Imputing missing values
 ```{r}
 activity2 <- read.csv("activity.csv")
-total_nas <- sum(is.na(activity$steps))
+total_nas <- sum(is.na(activity2$steps))
 
 activity2[is.na(activity2)] <- mean(activity2$steps, na.rm = TRUE)
+str(activity2)
 
 library(ggplot2)
 
@@ -68,20 +71,31 @@ activity2_sum <- activity2 %>%
     summarise(count = sum(steps), mean_steps= mean(steps), median_steps=median(steps))
 
 
-bar <- ggplot(activity2_sum, aes(x=date, y=count)) + geom_bar(stat="identity") 
-bar
+hist(activity2_sum$count, xlab="No.Steps (Day)", ylab="Frequency", main="Histogram of Steps/Day", col="steelblue")
 
-summary <- activity2_sum %>% 
-                  select(date, mean_steps, median_steps)
+summary <- activity2_sum %>% select(date, mean_steps, median_steps)
 
 summary
 
 ```
+Total missing values in the dataset are `r total_nas`. The overall shape of the histogram remains the same with the exception of the Frequency being higher on the imputed values (imputed with the overall mean). 
 
-### Comparing the differences between the non-imputed and imputed data sets
+### Comparing the differences between the original and imputed data sets
 ```{r}
 imp <- select(activity2_sum, date, count )
+colnames(imp) <- c("date", "imp_count")
+
 orig <- select(activity_sum, date, count )
+colnames(orig) <- c("date", "orig_count")
+
+join <- left_join(imp, orig, by="date")
+
+mutate <- mutate(join, diff=(imp_count-orig_count))
+
+```
+###The difference between original and imputed values
+```{r}
+mutate
 ```
 ###Weekdays vs Weekends
 ```{r}
@@ -96,7 +110,9 @@ activity2_weekend <- activity2 %>%
   group_by(weekday, interval) %>%
     summarise(count = sum(steps))
 
-
+```
+###Weekdays seem to be more active than weekends. 0-500 (5-minute) interval is dormant signaling sleep times. 
+```{r}
  g <- ggplot(activity2_weekend,aes(interval, count))  
  g + geom_line(col="steelblue") + facet_grid(weekday ~ .)
   
