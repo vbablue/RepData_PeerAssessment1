@@ -45,7 +45,9 @@ activity_sum <- activity_comp %>%
 
 
 ```r
-hist(activity_sum$count, xlab="No.Steps (Day)", ylab="Frequency", main="Histogram of Steps/Day", col="steelblue")
+ggplot(activity_sum, aes(count)) +
+  geom_histogram(binwidth=500, fill="#c0392b", alpha=0.75) +
+  labs(title="Distribution of Steps/Day", x="Count of total Steps/Day", y="Frequency")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
@@ -133,7 +135,11 @@ activity2_sum <- activity2 %>%
     summarise(count = sum(steps), mean_steps= mean(steps), median_steps=median(steps))
 
 
-hist(activity2_sum$count, xlab="No.Steps (Day)", ylab="Frequency", main="Histogram of Steps/Day", col="steelblue")
+#hist(activity2_sum$count, xlab="No.Steps (Day)", ylab="Frequency", main="Histogram of Steps/Day", col="steelblue")
+
+ggplot(activity2_sum, aes(count)) +
+  geom_histogram(binwidth=500, fill="#c0392b", alpha=0.75) +
+  labs(title="Distribution of Steps/Day (Imputed)", x="Count of total Steps/Day", y="Frequency")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-11-1.png) 
