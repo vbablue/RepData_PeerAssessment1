@@ -16,6 +16,7 @@ library(ggplot2)
 activity <- read.csv("activity.csv")
 
 ```
+
 2. Pre-process : The original data has NA's and they will be ignored for the initial part of the calculations. The mean and median and the total count is also calculated. 
 ```{r}
 activity_comp <- activity[complete.cases(activity),]
