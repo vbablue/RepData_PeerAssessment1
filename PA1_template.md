@@ -28,6 +28,7 @@ library(ggplot2)
 ```r
 activity <- read.csv("activity.csv")
 ```
+
 2. Pre-process : The original data has NA's and they will be ignored for the initial part of the calculations. The mean and median and the total count is also calculated. 
 
 ```r
@@ -58,26 +59,11 @@ ggplot(activity_sum, aes(count)) +
 ```r
 summary <- activity_sum %>% 
                   select(date, mean_steps, median_steps)
+```
+Mean number of steps taken is 37.3825996. Median number of steps taken is 0
 
-summary
-```
 
-```
-## Source: local data frame [53 x 3]
-## 
-##          date mean_steps median_steps
-## 1  2012-10-02    0.43750            0
-## 2  2012-10-03   39.41667            0
-## 3  2012-10-04   42.06944            0
-## 4  2012-10-05   46.15972            0
-## 5  2012-10-06   53.54167            0
-## 6  2012-10-07   38.24653            0
-## 7  2012-10-09   44.48264            0
-## 8  2012-10-10   34.37500            0
-## 9  2012-10-11   35.77778            0
-## 10 2012-10-12   60.35417            0
-## ..        ...        ...          ...
-```
+
 
 ##Average daily activity pattern
 1. Time series plot (Interval vs Avg. Steps taken across days)

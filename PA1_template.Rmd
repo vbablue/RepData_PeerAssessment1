@@ -46,8 +46,12 @@ ggplot(activity_sum, aes(count)) +
 summary <- activity_sum %>% 
                   select(date, mean_steps, median_steps)
 
-summary
+
 ```
+Mean number of steps taken is `r mean(activity_sum$mean_steps)`. Median number of steps taken is `r median(activity_sum$median_steps)`
+
+
+
 
 ##Average daily activity pattern
 1. Time series plot (Interval vs Avg. Steps taken across days)
